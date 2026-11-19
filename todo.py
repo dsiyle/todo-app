@@ -5,7 +5,6 @@ from pathlib import Path
 
 FICHIER = Path("taches.json")
 
-
 def charger():
     if FICHIER.exists():
         return json.loads(FICHIER.read_text(encoding="utf-8"))
@@ -14,7 +13,7 @@ def charger():
 
 def sauvegarder(taches):
     FICHIER.write_text(json.dumps(taches, indent=2, ensure_ascii=False), encoding="utf-8")
-
+    
 
 def ajouter(texte):
     taches = charger()
@@ -32,9 +31,20 @@ def lister():
         print(f"{numero}. [{case}] {tache['texte']}")
     print(f"Total : {len(taches)} tâche(s)")
     
-def aide():    
+
+def terminer(numero):
+    taches = charger()
+    taches[numero - 1]["faite"] = True
+    sauvegarder(taches)
+    print(f"Tâche {numero} terminée.")    
+
+    
+def aide():  
+        print(">>> TODO.py - Appli de gestion de TODO")    
         print("Usage : python todo.py <commande> [arguments]")
         print("Commandes : ajouter <texte>, lister")
+        print("Commandes : ajouter <texte>, lister, terminer <numéro>, aide")
+
 
 def main():
     if len(sys.argv) < 2:
@@ -45,6 +55,8 @@ def main():
         ajouter(" ".join(sys.argv[2:]))
     elif commande == "lister":
         lister()
+    elif commande == "terminer":
+        terminer(int(sys.argv[2]))        
     elif commande == "aide":
         aide()    
     else:
